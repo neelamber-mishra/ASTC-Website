@@ -1,22 +1,93 @@
-import React, { useState } from 'react';
-import { motion } from 'framer-motion';
-import SectionTitle from '../components/SectionTitle';
-import EventCard from '../components/EventCard';
-import { events } from '../data/events';
+import React, { useRef, useState, FormEvent } from "react";
+import { motion } from "framer-motion";
+import SectionTitle from "../components/SectionTitle";
+import EventCard from "../components/EventCard";
+import { events } from "../data/events";
+import emailjs from "@emailjs/browser"; // Import EmailJS
 
 const Events: React.FC = () => {
-  const [filter, setFilter] = useState<'all' | 'upcoming' | 'past'>('all');
-  
-  const filteredEvents = events.filter(event => {
-    if (filter === 'all') return true;
-    if (filter === 'upcoming') return event.isUpcoming;
-    if (filter === 'past') return !event.isUpcoming;
+  const [filter, setFilter] = useState<"all" | "upcoming" | "past">("all");
+
+  // Scrolls to top on page load
+  React.useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
+  const filteredEvents = events.filter((event) => {
+    if (filter === "all") return true;
+    if (filter === "upcoming") return event.isUpcoming;
+    if (filter === "past") return !event.isUpcoming;
     return true;
   });
 
-  React.useEffect(() => {
-      window.scrollTo(0, 0); 
-    }, []);
+  // --- EmailJS Integration for Event Suggestion Form ---
+  const formRef = useRef<HTMLFormElement>(null);
+  const [isSending, setIsSending] = useState<boolean>(false);
+  const [messageStatus, setMessageStatus] = useState<
+    "idle" | "success" | "error"
+  >("idle");
+
+  // Retrieve EmailJS credentials from environment variables
+  // IMPORTANT: Ensure VITE_EMAILJS_EVENT_SUGGESTION_TEMPLATE_ID is defined in your .env
+  const SERVICE_ID: string = import.meta.env.VITE_EMAILJS_SERVICE_ID2 || "";
+  const TEMPLATE_ID: string = import.meta.env.VITE_EMAILJS_TEMPLATE_ID3 || "";
+  const PUBLIC_KEY: string = import.meta.env.VITE_EMAILJS_PUBLIC_KEY2 || "";
+
+  /**
+   * Handles the form submission for event suggestions to send an email via EmailJS.
+   * @param e The form submission event.
+   */
+  const sendEventSuggestion = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault(); // Prevent default form submission
+
+    if (!formRef.current) {
+      console.error("Form reference is null. Cannot send event suggestion.");
+      setMessageStatus("error");
+      return;
+    }
+
+    if (!SERVICE_ID || !TEMPLATE_ID || !PUBLIC_KEY) {
+      console.error(
+        "EmailJS credentials are not configured for event suggestion. Please check your .env file."
+      );
+      setMessageStatus("error");
+      alert(
+        "Event suggestion feature is not configured. Please contact the website administrator."
+      );
+      return;
+    }
+
+    setIsSending(true); // Disable button and show loading
+    setMessageStatus("idle"); // Reset previous message status
+
+    try {
+      const result = await emailjs.sendForm(
+        SERVICE_ID,
+        TEMPLATE_ID,
+        formRef.current,
+        {
+          publicKey: PUBLIC_KEY,
+        }
+      );
+
+      console.log(
+        "Event Suggestion EmailJS SUCCESS!",
+        result.status,
+        result.text
+      );
+      setMessageStatus("success"); // Show success message
+      formRef.current.reset(); // Clear form fields
+    } catch (error: any) {
+      console.error("Event Suggestion EmailJS FAILED...", error);
+      setMessageStatus("error"); // Show error message
+      if (error && typeof error === "object" && "text" in error) {
+        console.error("Error details:", error.text);
+      }
+    } finally {
+      setIsSending(false); // Re-enable button
+    }
+  };
+  // --- End EmailJS Integration ---
 
   return (
     <div className="pt-20">
@@ -46,7 +117,8 @@ const Events: React.FC = () => {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.2 }}
             >
-              Discover our exciting range of events, from technical workshops and competitions to stargazing nights and guest lectures.
+              Discover our exciting range of events, from technical workshops
+              and competitions to stargazing nights and guest lectures.
             </motion.p>
           </div>
         </div>
@@ -58,18 +130,20 @@ const Events: React.FC = () => {
           <div className="mb-10 flex justify-center">
             <div className="inline-flex p-1 bg-space-primary/30 backdrop-blur-sm rounded-lg">
               {[
-                { label: 'All Events', value: 'all' },
-                { label: 'Upcoming', value: 'upcoming' },
-                { label: 'Past Events', value: 'past' }
+                { label: "All Events", value: "all" },
+                { label: "Upcoming", value: "upcoming" },
+                { label: "Past Events", value: "past" },
               ].map((option) => (
                 <button
                   key={option.value}
                   className={`px-4 py-2 text-sm font-medium rounded-md transition-colors ${
                     filter === option.value
-                      ? 'bg-space-accent text-space-dark'
-                      : 'text-gray-300 hover:text-white'
+                      ? "bg-space-accent text-space-dark"
+                      : "text-gray-300 hover:text-white"
                   }`}
-                  onClick={() => setFilter(option.value as 'all' | 'upcoming' | 'past')}
+                  onClick={() =>
+                    setFilter(option.value as "all" | "upcoming" | "past")
+                  }
                 >
                   {option.label}
                 </button>
@@ -94,12 +168,12 @@ const Events: React.FC = () => {
       {/* Calendar Section */}
       <section className="py-16 md:py-24 bg-space-primary/20">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <SectionTitle 
-            title="Event Calendar" 
+          <SectionTitle
+            title="Event Calendar"
             subtitle="Stay up to date with all our scheduled activities"
             light={true}
           />
-          
+
           <motion.div
             className="mt-12 bg-white/5 backdrop-blur-sm p-6 rounded-lg border border-white/10"
             initial={{ opacity: 0, y: 20 }}
@@ -109,8 +183,8 @@ const Events: React.FC = () => {
             <div className="text-center">
               <h3 className="text-white text-xl mb-4">Coming Soon!</h3>
               <p className="text-gray-300">
-                We're working on integrating a live calendar to make it easier for you to keep track of all our events.
-                Check back soon!
+                We're working on integrating a live calendar to make it easier
+                for you to keep track of all our events. Check back soon!
               </p>
             </div>
           </motion.div>
@@ -121,47 +195,92 @@ const Events: React.FC = () => {
       <section className="py-16 md:py-24">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-3xl mx-auto">
-            <SectionTitle 
-              title="Suggest an Event" 
+            <SectionTitle
+              title="Suggest an Event"
               subtitle="Have an idea for a space-related event? We'd love to hear it!"
               light={true}
             />
-            
+
             <motion.div
               className="mt-8 bg-white/5 backdrop-blur-sm p-6 md:p-8 rounded-lg border border-white/10"
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
             >
-              <form className="space-y-6">
+              {/* Message Status Feedback */}
+              {messageStatus === "success" && (
+                <motion.p
+                  initial={{ opacity: 0, y: -20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="bg-green-500/20 text-green-300 border border-green-500 rounded-md p-4 mb-4 text-center"
+                >
+                  Thank you for your suggestion! We've received your idea and
+                  will consider it.
+                </motion.p>
+              )}
+              {messageStatus === "error" && (
+                <motion.p
+                  initial={{ opacity: 0, y: -20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="bg-red-500/20 text-red-300 border border-red-500 rounded-md p-4 mb-4 text-center"
+                >
+                  Failed to send your suggestion. Please try again later.
+                </motion.p>
+              )}
+
+              <form
+                ref={formRef}
+                onSubmit={sendEventSuggestion}
+                className="space-y-6"
+              >
                 <div>
-                  <label htmlFor="name" className="block text-white mb-2">Your Name</label>
-                  <input 
-                    type="text" 
-                    id="name"
+                  <label htmlFor="from_name" className="block text-white mb-2">
+                    Your Name
+                  </label>
+                  <input
+                    type="text"
+                    id="from_name"
+                    name="from_name" // Name for EmailJS template
                     className="w-full px-4 py-2 bg-space-dark/50 border border-white/10 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-space-accent"
                   />
                 </div>
                 <div>
-                  <label htmlFor="email" className="block text-white mb-2">Email</label>
-                  <input 
-                    type="email" 
-                    id="email"
+                  <label htmlFor="from_email" className="block text-white mb-2">
+                    Email
+                  </label>
+                  <input
+                    type="email"
+                    id="from_email"
+                    name="from_email" // Name for EmailJS template
                     className="w-full px-4 py-2 bg-space-dark/50 border border-white/10 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-space-accent"
                   />
                 </div>
                 <div>
-                  <label htmlFor="event_title" className="block text-white mb-2">Event Title</label>
-                  <input 
-                    type="text" 
+                  <label
+                    htmlFor="event_title"
+                    className="block text-white mb-2"
+                  >
+                    Event Title *
+                  </label>
+                  <input
+                    type="text"
                     id="event_title"
+                    name="event_title" // Name for EmailJS template
+                    required // Make title required for suggestions
                     className="w-full px-4 py-2 bg-space-dark/50 border border-white/10 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-space-accent"
                   />
                 </div>
                 <div>
-                  <label htmlFor="event_description" className="block text-white mb-2">Event Description</label>
-                  <textarea 
+                  <label
+                    htmlFor="event_description"
+                    className="block text-white mb-2"
+                  >
+                    Event Description *
+                  </label>
+                  <textarea
                     id="event_description"
+                    name="event_description" // Name for EmailJS template
+                    required // Make description required for suggestions
                     rows={4}
                     className="w-full px-4 py-2 bg-space-dark/50 border border-white/10 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-space-accent"
                   ></textarea>
@@ -170,8 +289,9 @@ const Events: React.FC = () => {
                   <button
                     type="submit"
                     className="px-6 py-2 bg-space-accent text-space-dark font-medium rounded-md hover:bg-space-accent/90 transition-colors"
+                    disabled={isSending} // Disable button during submission
                   >
-                    Submit Suggestion
+                    {isSending ? "Submitting..." : "Submit Suggestion"}
                   </button>
                 </div>
               </form>
