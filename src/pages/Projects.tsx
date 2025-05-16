@@ -93,8 +93,8 @@ const Projects: React.FC = () => {
                 title: "Propulsion Systems Research",
                 description: "Our team is developing innovative propulsion systems for small satellites, focusing on electric propulsion technologies that can significantly extend the operational lifetime of CubeSats and enable new mission capabilities.",
                 achievements: [
-                  "Published paper in the International Journal of Space Propulsion",
-                  "Developed a prototype that achieved 15% higher efficiency than conventional systems",
+                  "Will Publish paper in the International Journal of Space Propulsion",
+                  "To Develope a prototype that will achieve 15% higher efficiency than conventional systems",
                   "Collaboration with national aerospace laboratory for testing"
                 ]
               },
@@ -102,9 +102,9 @@ const Projects: React.FC = () => {
                 title: "Atmospheric Data Collection",
                 description: "Through our high-altitude balloon projects, we've been collecting valuable data about atmospheric conditions at different altitudes, contributing to weather prediction models and atmospheric research.",
                 achievements: [
-                  "Successfully launched 5 high-altitude balloons in the past two years",
-                  "Data shared with meteorological department for research purposes",
-                  "Developed custom sensors for specialized data collection"
+                  "To launch 5 high-altitude balloons in the next two years",
+                  "To share Data with meteorological department for research purposes",
+                  "Develope custom sensors for specialized data collection"
                 ]
               }
             ].map((item, index) => (
@@ -118,7 +118,7 @@ const Projects: React.FC = () => {
               >
                 <h3 className="text-white text-xl font-bold mb-3">{item.title}</h3>
                 <p className="text-gray-300 mb-4">{item.description}</p>
-                <h4 className="text-space-accent font-medium mb-2">Key Achievements:</h4>
+                <h4 className="text-space-accent font-medium mb-2">Targets:</h4>
                 <ul className="space-y-2">
                   {item.achievements.map((achievement, i) => (
                     <li key={i} className="flex items-start text-gray-300">

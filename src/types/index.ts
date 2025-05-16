@@ -23,7 +23,7 @@ export interface Project {
   description: string;
   image: string;
   category: string;
-  team: string[];
+ 
 }
 
 export interface NewsItem {

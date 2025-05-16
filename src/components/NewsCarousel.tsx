@@ -21,7 +21,7 @@ const NewsCarousel: React.FC<NewsCarouselProps> = ({ news }) => {
   useEffect(() => {
     const interval = setInterval(() => {
       nextSlide();
-    }, 5000);
+    }, 3000);
     
     return () => clearInterval(interval);
   }, [current]);

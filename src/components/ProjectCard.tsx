@@ -34,8 +34,8 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project, index }) => {
         <p className="text-gray-300 mb-4 flex-grow">{project.description}</p>
         
         <div className="text-sm text-gray-400">
-          <span className="block mb-1">Team:</span>
-          <div className="flex flex-wrap gap-1">
+          {/* <span className="block mb-1">Team:</span> */}
+          {/* <div className="flex flex-wrap gap-1">
             {project.team.map((member, i) => (
               <span 
                 key={i} 
@@ -44,7 +44,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project, index }) => {
                 {member}
               </span>
             ))}
-          </div>
+          </div> */}
         </div>
       </div>
     </motion.div>

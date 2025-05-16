@@ -128,12 +128,12 @@ const About: React.FC = () => {
             <div className="space-y-12">
               {[
                 {
-                  year: "2015",
+                  year: "2017",
                   title: "Foundation",
                   description: "ASTC was founded by a small group of space enthusiasts at IIT ISM Dhanbad with the goal of promoting space science and technology among students."
                 },
                 {
-                  year: "2017",
+                  year: "2018",
                   title: "Projects and Research",
                   description: "The club successfully started a series of projects, including its first high-altitude balloon."
                 },
