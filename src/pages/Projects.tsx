@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import SectionTitle from '../components/SectionTitle';
 import ProjectCard from '../components/ProjectCard';
 import { projects } from '../data/projects';
+import { Link } from 'react-router-dom';
 
 const Projects: React.FC = () => {
   const categories = ['All', ...Array.from(new Set(projects.map(p => p.category)))];
@@ -155,11 +156,13 @@ const Projects: React.FC = () => {
                 collaborative opportunities, we invite you to join our projects. We believe in open
                 innovation and the power of diverse perspectives.
               </p>
+              <Link to={"/join"}>
               <button
                 className="px-6 py-2 bg-space-accent text-space-dark font-medium rounded-md hover:bg-space-accent/90 transition-colors"
-              >
+                >
                 Contact Research Team
               </button>
+                </Link>
             </motion.div>
           </div>
         </div>
