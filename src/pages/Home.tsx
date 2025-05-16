@@ -1,17 +1,18 @@
-import React from 'react';
-import { motion } from 'framer-motion';
-import { Rocket, Calendar, Users, Brain } from 'lucide-react';
-import { Link } from 'react-router-dom';
-import Button from '../components/Button';
-import NewsCarousel from '../components/NewsCarousel';
-import SectionTitle from '../components/SectionTitle';
-import { newsItems } from '../data/news';
-import { events } from '../data/events';
+import React from "react";
+import { motion } from "framer-motion";
+import { Rocket, Calendar, Users, Brain } from "lucide-react";
+import { Link } from "react-router-dom";
+import Button from "../components/Button";
+import NewsCarousel from "../components/NewsCarousel";
+import SectionTitle from "../components/SectionTitle";
+import { newsItems } from "../data/news";
+import { events } from "../data/events";
+import ParticleBackground from "../components/ParticleBackground";
 
 const Home: React.FC = () => {
-  const upcomingEvents = events.filter(event => event.isUpcoming).slice(0, 3);
+  const upcomingEvents = events.filter((event) => event.isUpcoming).slice(0, 3);
   React.useEffect(() => {
-    window.scrollTo(0, 0); 
+    window.scrollTo(0, 0);
   }, []);
   return (
     <div>
@@ -19,7 +20,7 @@ const Home: React.FC = () => {
       <section className="relative min-h-screen flex items-center">
         {/* Background stars effect */}
         <div className="absolute inset-0 overflow-hidden">
-          {[...Array(50)].map((_, i) => (
+          {/* {[...Array(50)].map((_, i) => (
             <div
               key={i}
               style={{
@@ -29,7 +30,8 @@ const Home: React.FC = () => {
               }}
               className="absolute h-1 w-1 rounded-full bg-white animate-twinkle"
             ></div>
-          ))}
+          ))} */}
+          <ParticleBackground />
         </div>
 
         {/* Hero content */}
@@ -180,10 +182,9 @@ const Home: React.FC = () => {
                   </p>
                   {event.registrationLink && (
                     <Link to={"/join"}>
-
-                    <Button variant="outline" size="sm">
-                      Learn more
-                    </Button>
+                      <Button variant="outline" size="sm">
+                        Learn more
+                      </Button>
                     </Link>
                   )}
                 </div>
